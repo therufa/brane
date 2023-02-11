@@ -28,6 +28,9 @@ const server = z.object({
   EMAIL_PORT: z.string(),
   EMAIL_USERNAME: z.string(),
   EMAIL_PASSWORD: z.string(),
+
+  GITHUB_CLIENT_ID: z.string(),
+  GITHUB_CLIENT_SECRET: z.string(),
 });
 
 /**
@@ -57,6 +60,9 @@ const processEnv = {
   EMAIL_PORT: process.env.EMAIL_PORT,
   EMAIL_USERNAME: process.env.EMAIL_USERNAME,
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+
+  GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
 };
 
 // Don't touch the part below
