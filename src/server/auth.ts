@@ -55,21 +55,6 @@ export const authOptions: NextAuthOptions = {
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
     }),
-    EmailProvider({
-      server: {
-        host: env.EMAIL_HOST,
-        port: env.EMAIL_PORT,
-        auth: {
-          user: env.EMAIL_USERNAME,
-          pass: env.EMAIL_PASSWORD,
-        },
-      },
-      from: env.EMAIL_FROM,
-    }),
-    GithubProvider({
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
-    }),
     /**
      * ...add more providers here
      *
