@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 
-export const exampleRouter = createTRPCRouter({
+export const noteRouter = createTRPCRouter({
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
@@ -34,7 +34,7 @@ export const exampleRouter = createTRPCRouter({
         }
       })
     }),
-  
+
   create: protectedProcedure
     .input(z.object({ title: z.string(), content: z.string() }))
     .mutation(({ ctx, input }) => {
@@ -46,6 +46,6 @@ export const exampleRouter = createTRPCRouter({
           authorId
         }
       })
-    }
+    })
 
 })

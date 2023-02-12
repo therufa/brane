@@ -4,8 +4,20 @@ import Head from 'next/head'
 import { signIn, signOut, useSession } from 'next-auth/react'
 
 import { api } from '../utils/api'
+import type { FormEvent } from 'react'
+import React, { useState } from 'react'
 
 const Home: NextPage = () => {
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+  const create = api.note.create.useMutation()
+
+  const createNote = (evt: FormEvent<unknown>) => {
+    evt.preventDefault()
+
+    create.mutate({ title, content })
+  }
+
   return (
     <>
       <Head>
@@ -15,6 +27,27 @@ const Home: NextPage = () => {
       </Head>
       <main className="">
         <AuthShowcase />
+
+        <div className="flex flex-col items-center justify-center gap-4">
+          <p className="text-2xl font-bold">Create a new post</p>
+          <form className="flex flex-col gap-4"
+            onSubmit={(evt) => createNote(evt)}>
+            <label htmlFor="title">Title</label>
+            <input
+              type="text"
+              name="title"
+              id="title"
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <label htmlFor="description">Description</label>
+            <textarea
+              name="description"
+              id="description"
+              onChange={(e) => setContent(e.target.value)}
+            />
+            <button type="submit">Submit</button>
+          </form>
+        </div>
       </main>
     </>
   )
@@ -25,16 +58,10 @@ export default Home
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession()
 
-  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-    undefined, // no input
-    { enabled: sessionData?.user !== undefined }
-  )
-
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="">
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-        {secretMessage && <span> - {secretMessage.name}</span>}
       </p>
       <button
         className="rounded-full bg-black/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
