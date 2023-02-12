@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod'
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
 export const exampleRouter = createTRPCRouter({
   getOne: protectedProcedure
@@ -10,16 +10,25 @@ export const exampleRouter = createTRPCRouter({
         select: {
           id: true,
           title: true,
-          content: true,
+          content: true
         },
         where: {
           id: input.id,
+          AND: {
+            authorId: ctx.session.user.id
+          }
         }
-      });
+      })
     }),
 
   getAll: protectedProcedure
     .query(({ ctx }) => {
-      return ctx.prisma.example.findMany();
-    }),
-});
+      const authorId = ctx.session.user.id
+
+      return ctx.prisma.note.findMany({
+        where: {
+          authorId
+        }
+      })
+    })
+})
