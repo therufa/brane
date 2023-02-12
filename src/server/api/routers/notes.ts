@@ -1,3 +1,4 @@
+import type { Note } from '@prisma/client'
 import { z } from 'zod'
 
 import { createTRPCRouter, protectedProcedure } from '../trpc'
@@ -6,19 +7,21 @@ export const exampleRouter = createTRPCRouter({
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
-      return ctx.prisma.note.findUnique({
-        select: {
-          id: true,
-          title: true,
-          content: true
-        },
+      // const authorId = ctx.session.user.id
+
+      return ctx.prisma.note.findUniqueOrThrow({
         where: {
-          id: input.id,
-          AND: {
-            authorId: ctx.session.user.id
+          id: input.id
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true
+            }
           }
         }
-      })
+      }) as Promise<Note>
     }),
 
   getAll: protectedProcedure
@@ -30,5 +33,19 @@ export const exampleRouter = createTRPCRouter({
           authorId
         }
       })
-    })
+    }),
+  
+  create: protectedProcedure
+    .input(z.object({ title: z.string(), content: z.string() }))
+    .mutation(({ ctx, input }) => {
+      const authorId = ctx.session.user.id
+
+      return ctx.prisma.note.create({
+        data: {
+          ...input,
+          authorId
+        }
+      })
+    }
+
 })
