@@ -10,12 +10,37 @@ import React, { useState } from 'react'
 const Home: NextPage = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const create = api.note.create.useMutation()
+  const utils = api.useContext()
+  const create = api.note.create.useMutation({
+    async onMutate (newNote) {
+      await utils.note.getAll.cancel()
+      const prevData = utils.note.getAll.getData()
+      console.log({ prevData })
+
+      utils.note.getAll.setData(
+        undefined,
+        (old) => old ? ([...old, newNote] as typeof old) : []
+      )
+
+      return { prevData }
+    },
+    onError (_err, _newNote, ctx) {
+      utils.note.getAll.setData(undefined, ctx?.prevData)
+    },
+    onSettled () {
+      void utils.note.getAll.refetch()
+    }
+  })
+  const notes = api.note.getAll.useQuery()
 
   const createNote = (evt: FormEvent<unknown>) => {
     evt.preventDefault()
 
+    if (!title || !content) return
+
     create.mutate({ title, content })
+    setTitle('')
+    setContent('')
   }
 
   return (
@@ -37,16 +62,28 @@ const Home: NextPage = () => {
               type="text"
               name="title"
               id="title"
+              value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
             <label htmlFor="description">Description</label>
             <textarea
               name="description"
               id="description"
+              value={content}
               onChange={(e) => setContent(e.target.value)}
             />
             <button type="submit">Submit</button>
           </form>
+
+          <div className="flex flex-col gap-4">
+            <p className="text-2xl font-bold">Your posts</p>
+            {notes.data?.map((note) => (
+              <div key={note.id}>
+                <p>{note.title}</p>
+                <p>{note.content}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
     </>
