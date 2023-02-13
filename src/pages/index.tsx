@@ -55,7 +55,6 @@ const AddNoteForm: React.FC = () => {
     async onMutate (newNote) {
       await utils.note.getAll.cancel()
       const prevData = utils.note.getAll.getData()
-      console.log({ prevData })
 
       utils.note.getAll.setData(
         undefined,
@@ -68,7 +67,7 @@ const AddNoteForm: React.FC = () => {
       utils.note.getAll.setData(undefined, ctx?.prevData)
     },
     onSettled () {
-      void utils.note.getAll.refetch()
+      void utils.note.getAll.invalidate()
     }
   })
   const createNote = (evt: FormEvent<unknown>) => {
