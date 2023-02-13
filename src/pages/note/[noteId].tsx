@@ -8,7 +8,7 @@ import { api } from '../../utils/api'
 const NotePage: NextPage = () => {
   const router = useRouter()
   const { noteId } = router.query
-  const note = api.note.getOne.useQuery({ id: noteId as string })
+  const { data: note } = api.note.getOne.useQuery({ id: noteId as string })
 
   return (
     <>
@@ -18,7 +18,17 @@ const NotePage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        {!note.data ? 'death' : note.data.title}
+        {note && (
+          <div className="p-4 max-w-5xl w-full">
+            <p>{note.title}</p>
+            <p>{note.content}</p>
+          </div>
+        )}
+        {!note && (
+          <div className="p-4 max-w-5xl w-full">
+            <p>death :(</p>
+          </div>
+        )}
       </Layout>
     </>
   )
