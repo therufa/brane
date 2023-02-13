@@ -34,6 +34,7 @@ export const noteRouter = createTRPCRouter({
 
   create: protectedProcedure
     .input(z.object({
+      id: z.string().length(24),
       title: z.string(),
       content: z.string()
     }))
