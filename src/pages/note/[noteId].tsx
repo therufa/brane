@@ -21,7 +21,7 @@ const NotePage: NextPage = () => {
         {note && (
           <div className="p-4 max-w-5xl w-full">
             <p>{note.title}</p>
-            <p>{note.content}</p>
+            <p dangerouslySetInnerHTML={{ __html: note.content }} />
           </div>
         )}
         {!note && (

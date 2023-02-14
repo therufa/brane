@@ -2,7 +2,7 @@ import { createId } from '@paralleldrive/cuid2'
 import { type NextPage } from 'next'
 import Head from 'next/head'
 import type { FormEvent } from 'react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { api } from '../../utils/api'
 import { Layout } from './_layout'
 import { withAuth } from './_withAuth'
@@ -63,17 +63,50 @@ const NotePage: NextPage = () => {
               />
               <button type="submit">save</button>
             </div>
-            <textarea
+            <Editable
+              className="flex-1 border-b border-gray-300 outline-none min-h-min"
+              onChange={(evt, value) => {
+                setContent(value || '')
+                console.log(value)
+              }}
+            />
+            {/* <textarea
               name="description"
               id="description"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="outline-none border-b border-gray-300"
-            />
+            /> */}
           </form>
         </div>
       </Layout>
     </>
+  )
+}
+
+type EditableProps = Omit<React.ComponentPropsWithoutRef<'div'>, 'onInput' | 'onChange'> & {
+  value?: string
+  onChange?: (evt: React.FormEvent<unknown>, value: string) => void
+  onInput?: (evt: React.FormEvent<unknown>, value: string) => void
+}
+
+const Editable: React.FC<EditableProps> = ({ value, onChange, className }) => {
+  const ref = useRef<any>()
+  const val = useRef(value || '')
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      contentEditable
+      dangerouslySetInnerHTML={{ __html: val.current }}
+      onInput={(e) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        // console.log(ref.current?.innerHTML)
+        // val.current = ref.current.innerHTML
+        onChange?.(e, ref.current?.innerHTML || '')
+      }}
+    />
   )
 }
 
