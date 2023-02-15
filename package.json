@@ -23,6 +23,8 @@
     "nodemailer": "^6.9.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "slate": "^0.90.0",
+    "slate-react": "^0.91.0",
     "superjson": "1.9.1",
     "zod": "^3.20.2"
   },
