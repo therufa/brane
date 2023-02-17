@@ -1,7 +1,6 @@
 import { type NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { withAuth } from './_withAuth'
 import { Layout } from './_layout'
 import { api } from '../../utils/api'
 
@@ -34,4 +33,4 @@ const NotePage: NextPage = () => {
   )
 }
 
-export default withAuth(NotePage)
+export default NotePage
