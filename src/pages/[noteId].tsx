@@ -1,8 +1,10 @@
 import { type NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { Layout } from './_layout'
-import { api } from '../../utils/api'
+import BraneEditor from '../components/editor'
+import { Layout } from '../components/layout/sidebar'
+import { api } from '../utils/api'
+import type { Descendant } from 'slate'
 
 const NotePage: NextPage = () => {
   const router = useRouter()
@@ -20,7 +22,7 @@ const NotePage: NextPage = () => {
         {note && (
           <div className="p-4 max-w-5xl w-full">
             <p>{note.title}</p>
-            <p dangerouslySetInnerHTML={{ __html: note.content }} />
+            <BraneEditor value={JSON.parse(note.content) as Descendant[]} />
           </div>
         )}
         {!note && (

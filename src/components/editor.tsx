@@ -4,21 +4,20 @@ import { createEditor } from 'slate'
 import { Editable, Slate, withReact } from 'slate-react'
 
 type BraneEditorProps = {
-  value: string
-  onChange?: (value: string) => void
+  value: Descendant[]
+  onChange?: (value: Descendant[]) => void
 }
 const BraneEditor: React.FC<BraneEditorProps> = ({ value, onChange }) => {
-  const innerValue = useMemo(() => JSON.parse(value) as Descendant[], [value])
   const editor = useMemo(() => withReact(createEditor()), [])
 
   return (
     <Slate
       editor={editor}
-      value={innerValue}
+      value={value}
       onChange={(newValue) => {
         const isAstChange = editor.operations.some((op) => op.type !== 'set_node')
         if (isAstChange) {
-          onChange?.(JSON.stringify(newValue))
+          onChange?.(newValue)
         }
       }}
     >
