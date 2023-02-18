@@ -10,6 +10,8 @@ type BraneEditorProps = {
 const BraneEditor: React.FC<BraneEditorProps> = ({ value, onChange }) => {
   const editor = useMemo(() => withReact(createEditor()), [])
 
+  editor.children = value
+
   return (
     <Slate
       editor={editor}

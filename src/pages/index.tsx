@@ -7,6 +7,7 @@ import { Layout } from '../components/layout/sidebar'
 import BraneEditor from '../components/editor'
 import type { NextPageWithLayout } from './_app'
 import type { Descendant } from 'slate'
+import { useRouter } from 'next/router'
 
 const initialValue: Descendant[] = [
   {
@@ -16,6 +17,7 @@ const initialValue: Descendant[] = [
 ]
 
 const NotePage: NextPageWithLayout = () => {
+  const router = useRouter()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState(initialValue)
   const utils = api.useContext()
@@ -43,9 +45,10 @@ const NotePage: NextPageWithLayout = () => {
 
     if (!title || !content) return
 
-    create.mutate({ id: createId(), title, content: JSON.stringify(content) })
-    setTitle('')
-    setContent(initialValue)
+    const id = createId()
+
+    create.mutate({ id, title, content: JSON.stringify(content) })
+    void router.push(`/${id}`)
   }
 
   return (
