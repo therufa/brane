@@ -5,16 +5,15 @@ import BraneEditor from '../components/editor'
 import { Layout } from '../components/layout/sidebar'
 import { api } from '../utils/api'
 import type { Descendant } from 'slate'
-import type { FormEvent } from 'react'
-import { useEffect, useState } from 'react'
+
+type ChangeHandler = React.ComponentProps<typeof BraneEditor>['onChange']
 
 const NotePage: NextPage = () => {
   const router = useRouter()
-  const utils = api.useContext()
   const { noteId } = router.query as { noteId: string }
   const { data: note } = api.note.getOne.useQuery({ id: noteId })
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState<Descendant[]>([])
+
+  const utils = api.useContext()
   const update = api.note.update.useMutation({
     async onMutate () {
       await utils.note.getAll.cancel()
@@ -28,18 +27,10 @@ const NotePage: NextPage = () => {
       void utils.note.getAll.invalidate()
     }
   })
-  const handleUpdate = (e: FormEvent<unknown>) => {
-    e.preventDefault()
 
-    if (!note) return
-
-    update.mutate({ id: noteId, title, content: JSON.stringify(content) })
+  const handleEditorChange: ChangeHandler = ({ blocks, title }) => {
+    update.mutate({ id: noteId, title, content: JSON.stringify(blocks) })
   }
-
-  useEffect(() => {
-    setTitle(note?.title ?? '')
-    setContent(note ? JSON.parse(note.content) as Descendant[] : [])
-  }, [note])
 
   return (
     <>
@@ -51,23 +42,13 @@ const NotePage: NextPage = () => {
       <Layout>
         {note && (
           <div className="p-4 max-w-5xl w-full">
-            <form className="flex flex-col gap-4"
-              onSubmit={(e) => handleUpdate(e)}
-            >
-              <div className='flex gap-4'>
-                <input
-                  type="text"
-                  name="title"
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="flex-1 border-b border-gray-300 outline-none"
-                  placeholder='Title'
-                />
-                <button type="submit">save</button>
-              </div>
-              <BraneEditor value={content} onChange={setContent} />
-            </form>
+            <BraneEditor
+              value={{
+                title: note.title,
+                blocks: JSON.parse(note.content) as Descendant[]
+              }}
+              onChange={handleEditorChange}
+            />
           </div>
         )}
         {!note && (
